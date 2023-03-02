@@ -81,10 +81,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+
+
         <ListView
             android:id="@+id/lvQuotes"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/bottom"
