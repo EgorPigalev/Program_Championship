@@ -7,19 +7,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
-public class MainActivity extends AppCompatActivity {
+public class SplashScreen extends AppCompatActivity {
 
     private final int SPLASH_DISPLAY_LENGTH = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_splash_screen);
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent mainIntent = new Intent(MainActivity.this, Onboarding.class);
+                Intent mainIntent = new Intent(SplashScreen.this, Onboarding.class);
                 startActivity(mainIntent);
                 finish();
             }
