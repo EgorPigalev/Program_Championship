@@ -1,6 +1,7 @@
 package com.example.program_championship;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -24,19 +25,26 @@ public class Main extends AppCompatActivity {
     private AdapterMaskQuote pAdapter;
     private List<MaskQuote> listQuote = new ArrayList<>();
 
-    ListView listView;
+    private AdapterMaskFeeling adapterMaskFeeling;
+    private List<MaskFeeling> listFeelings = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ListView ivProducts = findViewById(R.id.lvQuotes);
         pAdapter = new AdapterMaskQuote(Main.this, listQuote);
         ivProducts.setAdapter(pAdapter);
-        new GetPhones().execute();
+        new GetQuotes().execute();
+
+        RecyclerView lvFeelings = findViewById(R.id.rvFeelings);
+        adapterMaskFeeling = new AdapterMaskFeeling(Main.this, listFeelings);
+        lvFeelings.setAdapter(adapterMaskFeeling);
+        new GetFeelings().execute();
     }
 
-    private class GetPhones extends AsyncTask<Void, Void, String> {
+    private class GetQuotes extends AsyncTask<Void, Void, String> {
 
         @Override
         protected String doInBackground(Void... voids) {
@@ -81,6 +89,60 @@ public class Main extends AppCompatActivity {
                     );
                     listQuote.add(tempProduct);
                     pAdapter.notifyDataSetInvalidated();
+                }
+            }
+            catch (Exception exception)
+            {
+                Toast.makeText(Main.this, "При выводе данных возникла ошибка", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class GetFeelings  extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+                URL url = new URL("http://mskko2021.mad.hakta.pro/api/feelings ");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder result = new StringBuilder();
+                String line = "";
+
+                while ((line = reader.readLine()) != null)
+                {
+                    result.append(line);
+                }
+                return result.toString();
+            }
+            catch (Exception exception)
+            {
+                return null;
+            }
+        }
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            try
+            {
+                listFeelings.clear();
+                adapterMaskFeeling.notifyDataSetInvalidated();
+
+                JSONObject object = new JSONObject(s);
+                JSONArray tempArray  = object.getJSONArray("data");
+
+                for (int i = 0;i<tempArray.length();i++)
+                {
+                    JSONObject productJson = tempArray.getJSONObject(i);
+                    MaskFeeling tempProduct = new MaskFeeling(
+                            productJson.getInt("id"),
+                            productJson.getString("title"),
+                            productJson.getInt("position"),
+                            productJson.getString("image")
+                    );
+                    listFeelings.add(tempProduct);
+                    adapterMaskFeeling.notifyDataSetInvalidated();
                 }
             }
             catch (Exception exception)
